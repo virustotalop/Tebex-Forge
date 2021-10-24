@@ -66,7 +66,7 @@ minecraft {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.13.2-25.0.175'
+    minecraft 'net.minecraftforge:forge:1.12.2-14.23.5.2855'
     shadow 'com.github.tebexio.BuycraftX:buycraftx-plugin-shared:4c2cdb00d1'
 }
 
