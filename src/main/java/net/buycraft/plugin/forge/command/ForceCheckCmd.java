@@ -1,36 +1,32 @@
 package net.buycraft.plugin.forge.command;
 
-import com.mojang.brigadier.Command;
-import com.mojang.brigadier.context.CommandContext;
 import net.buycraft.plugin.forge.BuycraftPlugin;
 import net.buycraft.plugin.forge.util.ForgeMessageUtil;
-import net.minecraft.command.CommandSource;
+import net.minecraft.command.CommandException;
+import net.minecraft.command.ICommandSender;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.TextComponentString;
 
-public class ForceCheckCmd implements Command<CommandSource> {
+public class ForceCheckCmd extends SubCommand {
     private final BuycraftPlugin plugin;
 
     public ForceCheckCmd(final BuycraftPlugin plugin) {
+        super("forcecheck", "/tebex forcecheck");
         this.plugin = plugin;
     }
 
     @Override
-    public int run(CommandContext<CommandSource> context) {
+    public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
         if (plugin.getApiClient() == null) {
-            ForgeMessageUtil.sendMessage(context.getSource(), new TextComponentString(ForgeMessageUtil.format("need_secret_key"))
+            ForgeMessageUtil.sendMessage(sender, new TextComponentString(ForgeMessageUtil.format("need_secret_key"))
                     .setStyle(BuycraftPlugin.ERROR_STYLE));
-            return 1;
-        }
-
-        if (plugin.getDuePlayerFetcher().inProgress()) {
-            ForgeMessageUtil.sendMessage(context.getSource(), new TextComponentString(ForgeMessageUtil.format("already_checking_for_purchases"))
+        } else if (plugin.getDuePlayerFetcher().inProgress()) {
+            ForgeMessageUtil.sendMessage(sender, new TextComponentString(ForgeMessageUtil.format("already_checking_for_purchases"))
                     .setStyle(BuycraftPlugin.ERROR_STYLE));
-            return 1;
+        } else {
+            plugin.getExecutor().submit(() -> plugin.getDuePlayerFetcher().run(false));
+            ForgeMessageUtil.sendMessage(sender, new TextComponentString(ForgeMessageUtil.format("forcecheck_queued"))
+                    .setStyle(BuycraftPlugin.SUCCESS_STYLE));
         }
-
-        plugin.getExecutor().submit(() -> plugin.getDuePlayerFetcher().run(false));
-        ForgeMessageUtil.sendMessage(context.getSource(), new TextComponentString(ForgeMessageUtil.format("forcecheck_queued"))
-                .setStyle(BuycraftPlugin.SUCCESS_STYLE));
-        return 1;
     }
 }

@@ -123,7 +123,7 @@ public class ForgeBuycraftPlatform implements IBuycraftPlatform {
 
     @Override
     public String getPluginVersion() {
-        return plugin.getPluginVersion();
+        return BuycraftPlugin.PLUGIN_VERSION;
     }
 
     @Override

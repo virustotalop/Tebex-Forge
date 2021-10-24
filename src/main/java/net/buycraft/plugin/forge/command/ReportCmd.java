@@ -1,12 +1,11 @@
 package net.buycraft.plugin.forge.command;
 
-import com.mojang.brigadier.Command;
-import com.mojang.brigadier.context.CommandContext;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.buycraft.plugin.forge.BuycraftPlugin;
 import net.buycraft.plugin.forge.util.ForgeMessageUtil;
 import net.buycraft.plugin.shared.util.ReportBuilder;
-import net.minecraft.command.CommandSource;
+import net.minecraft.command.CommandException;
+import net.minecraft.command.ICommandSender;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.TextComponentString;
 
 import java.io.BufferedWriter;
@@ -18,18 +17,20 @@ import java.nio.file.StandardOpenOption;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class ReportCmd implements Command<CommandSource> {
+public class ReportCmd extends SubCommand {
+
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd-hh-mm-ss");
 
     private final BuycraftPlugin plugin;
 
     public ReportCmd(final BuycraftPlugin plugin) {
+        super("report", "/tebex report");
         this.plugin = plugin;
     }
 
     @Override
-    public int run(CommandContext<CommandSource> context) throws CommandSyntaxException {
-        ForgeMessageUtil.sendMessage(context.getSource(), new TextComponentString(ForgeMessageUtil.format("report_wait"))
+    public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
+        ForgeMessageUtil.sendMessage(sender, new TextComponentString(ForgeMessageUtil.format("report_wait"))
                 .setStyle(BuycraftPlugin.SUCCESS_STYLE));
 
         plugin.getPlatform().executeAsync(() -> {
@@ -51,14 +52,13 @@ public class ReportCmd implements Command<CommandSource> {
 
             try (BufferedWriter w = Files.newBufferedWriter(p, StandardCharsets.UTF_8, StandardOpenOption.CREATE_NEW)) {
                 w.write(generated);
-                ForgeMessageUtil.sendMessage(context.getSource(), new TextComponentString(ForgeMessageUtil.format("report_saved", p.toAbsolutePath().toString()))
+                ForgeMessageUtil.sendMessage(sender, new TextComponentString(ForgeMessageUtil.format("report_saved", p.toAbsolutePath().toString()))
                         .setStyle(BuycraftPlugin.INFO_STYLE));
             } catch (IOException e) {
-                ForgeMessageUtil.sendMessage(context.getSource(), new TextComponentString(ForgeMessageUtil.format("report_cant_save"))
+                ForgeMessageUtil.sendMessage(sender, new TextComponentString(ForgeMessageUtil.format("report_cant_save"))
                         .setStyle(BuycraftPlugin.ERROR_STYLE));
                 plugin.getLogger().info(generated);
             }
         });
-        return 1;
     }
 }

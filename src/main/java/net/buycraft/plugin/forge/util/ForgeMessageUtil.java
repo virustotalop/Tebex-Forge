@@ -67,8 +67,7 @@ public final class ForgeMessageUtil {
 
     //Look idk, forge methods are still kinda busted in how they work, so a util it is \o/
     public static void sendMessage(ICommandSender source, ITextComponent message) {
-        if (source.getCommandSenderEntity() != null) source.sendMessage(message);
-        else if (source.getServer() != null) source.getServer().sendMessage(message);
+        source.sendMessage(message);
     }
 
     public static String format(String message, Object... params) {

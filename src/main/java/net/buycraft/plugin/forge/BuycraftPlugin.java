@@ -40,16 +40,16 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.logging.Level;
 
-@Mod("buycraftx")
+@Mod(modid = "buycraftx", name = "BuycraftX", version = BuycraftPlugin.PLUGIN_VERSION)
 public class BuycraftPlugin {
+
+    public static final String PLUGIN_VERSION = "${pluginVersion}";
 
     private static final Logger LOGGER = LogManager.getLogger("Tebex");
 
     public static final Style SUCCESS_STYLE = new Style().setColor(TextFormatting.GREEN);
     public static final Style INFO_STYLE = new Style().setColor(TextFormatting.YELLOW);
     public static final Style ERROR_STYLE = new Style().setColor(TextFormatting.RED);
-
-    private final String pluginVersion;
 
     private final PlaceholderManager placeholderManager = new PlaceholderManager();
     private final BuycraftConfiguration configuration = new BuycraftConfiguration();
@@ -71,7 +71,6 @@ public class BuycraftPlugin {
     private PlayerJoinCheckTask playerJoinCheckTask;
 
     public BuycraftPlugin() {
-        pluginVersion = ModLoadingContext.get().getActiveContainer().getModInfo().getVersion().toString();
         MinecraftForge.EVENT_BUS.register(this);
     }
 
@@ -92,10 +91,8 @@ public class BuycraftPlugin {
 
             platform = new ForgeBuycraftPlatform(this);
 
-            //region Commands
-
-            event.getCommandDispatcher().register(this.configureCommand(Commands.literal("tebex")));
-            event.getCommandDispatcher().register(this.configureCommand(Commands.literal("buycraft")));
+            this.registerTebexCommand(event,"tebex");
+            this.registerTebexCommand(event,"buycraft");
 
             if (!configuration.isDisableBuyCommand())
                 configuration.getBuyCommandName().forEach(cmd ->
@@ -164,30 +161,24 @@ public class BuycraftPlugin {
         }
     }
 
-    private LiteralArgumentBuilder<CommandSource> configureCommand(LiteralArgumentBuilder<CommandSource> command) {
-        CouponCmd couponCmd = new CouponCmd(this);
-        return command
-                .requires(player -> player.hasPermissionLevel(2))
-                .then(Commands.literal("coupon")
-                        .then(Commands.literal("create")
-                                .then(Commands.argument("data", StringArgumentType.greedyString()).executes(couponCmd::create)))
-                        .then(Commands.literal("delete")
-                                .then(Commands.argument("code", StringArgumentType.word()).executes(couponCmd::delete))))
-                .then(Commands.literal("forcecheck").executes(new ForceCheckCmd(this)))
-                .then(Commands.literal("info").executes(new InfoCmd(this)))
-                .then(Commands.literal("report").executes(new ReportCmd(this)))
-                .then(Commands.literal("secret")
-                        .then(Commands.argument("secret", StringArgumentType.word()).executes(new SecretCmd(this))));
+    private void registerTebexCommand(FMLServerStartingEvent event, String alias) {
+        event.registerServerCommand(new TebexRootCmd(event.getServer(), alias)
+                .addChild(new CouponCmd(this))
+                .addChild(new ForceCheckCmd(this))
+                .addChild(new InfoCmd(this))
+                .addChild(new ReportCmd(this))
+                .addChild(new SecretCmd(this))
+        );
     }
 
     @SubscribeEvent
     public void onPlayerJoin(PlayerEvent.PlayerLoggedInEvent event) {
-        if (event.getPlayer().getServer() != null && event.getPlayer().getServer().isDedicatedServer()) {
+        if (event.player.getServer() != null && event.player.getServer().isDedicatedServer()) {
             if (apiClient == null) {
                 return;
             }
 
-            QueuedPlayer qp = duePlayerFetcher.fetchAndRemoveDuePlayer(event.getPlayer().getName().getString());
+            QueuedPlayer qp = duePlayerFetcher.fetchAndRemoveDuePlayer(event.player.getName());
             if (qp != null) {
                 playerJoinCheckTask.queue(qp);
             }
@@ -230,10 +221,6 @@ public class BuycraftPlugin {
 
     public Logger getLogger() {
         return LOGGER;
-    }
-
-    public final String getPluginVersion() {
-        return pluginVersion;
     }
 
     public MinecraftServer getServer() {

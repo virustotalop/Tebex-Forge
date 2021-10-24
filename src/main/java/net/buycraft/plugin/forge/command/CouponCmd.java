@@ -1,24 +1,19 @@
 package net.buycraft.plugin.forge.command;
 
-import com.mojang.brigadier.arguments.StringArgumentType;
-import com.mojang.brigadier.context.CommandContext;
-import net.buycraft.plugin.data.Coupon;
 import net.buycraft.plugin.forge.BuycraftPlugin;
-import net.buycraft.plugin.forge.util.ForgeMessageUtil;
-import net.buycraft.plugin.shared.util.CouponUtil;
-import net.minecraft.command.CommandSource;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.command.CommandException;
+import net.minecraft.command.ICommandSender;
+import net.minecraft.server.MinecraftServer;
 
-import java.io.IOException;
-
-public class CouponCmd {
+public class CouponCmd extends SubCommand {
     private final BuycraftPlugin plugin;
 
     public CouponCmd(final BuycraftPlugin plugin) {
+        super("coupon", "/tebex coupon <create/delete>");
         this.plugin = plugin;
     }
 
-    public int create(CommandContext<CommandSource> context) {
+    /*public int create(CommandContext<CommandSource> context) {
         if (plugin.getApiClient() == null) {
             ForgeMessageUtil.sendMessage(context.getSource(), new TextComponentString(ForgeMessageUtil.format("generic_api_operation_error"))
                     .setStyle(BuycraftPlugin.ERROR_STYLE));
@@ -66,5 +61,10 @@ public class CouponCmd {
         });
 
         return 1;
+    }*/
+
+    @Override
+    public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
+
     }
 }
