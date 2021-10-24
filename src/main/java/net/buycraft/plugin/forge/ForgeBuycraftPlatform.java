@@ -1,6 +1,5 @@
 package net.buycraft.plugin.forge;
 
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.buycraft.plugin.BuyCraftAPI;
 import net.buycraft.plugin.IBuycraftPlatform;
 import net.buycraft.plugin.UuidUtil;
@@ -13,7 +12,7 @@ import net.buycraft.plugin.platform.PlatformType;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.versions.forge.ForgeVersion;
+import net.minecraftforge.common.ForgeVersion;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -52,11 +51,7 @@ public class ForgeBuycraftPlatform implements IBuycraftPlatform {
     @Override
     public void dispatchCommand(String command) {
         plugin.getServer().addScheduledTask(() -> { //Ensure main
-            try {
-                plugin.getServer().getCommandManager().getDispatcher().execute(command, plugin.getServer().getCommandSource());
-            } catch (CommandSyntaxException e) {
-                log(Level.SEVERE, "Failed to dispatch command \'" + command + "\'", e);
-            }
+            plugin.getServer().getCommandManager().executeCommand(plugin.getServer(), command);
         });
     }
 
@@ -90,7 +85,7 @@ public class ForgeBuycraftPlatform implements IBuycraftPlatform {
         } else {
             return plugin.getServer().getPlayerList().getPlayers()
                     .stream()
-                    .filter(entityPlayerMP -> entityPlayerMP.getName().getString().equalsIgnoreCase(player.getName()))
+                    .filter(entityPlayerMP -> entityPlayerMP.getName().equalsIgnoreCase(player.getName()))
                     .findFirst().orElse(null);
         }
     }

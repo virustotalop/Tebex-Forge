@@ -1,7 +1,5 @@
 package net.buycraft.plugin.forge;
 
-import com.mojang.brigadier.arguments.StringArgumentType;
-import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.buycraft.plugin.BuyCraftAPI;
 import net.buycraft.plugin.IBuycraftPlatform;
 import net.buycraft.plugin.data.QueuedPlayer;
@@ -14,23 +12,19 @@ import net.buycraft.plugin.execution.strategy.CommandExecutor;
 import net.buycraft.plugin.execution.strategy.PostCompletedCommandsTask;
 import net.buycraft.plugin.execution.strategy.QueuedCommandExecutor;
 import net.buycraft.plugin.forge.command.*;
-import net.buycraft.plugin.forge.util.VersionCheck;
 import net.buycraft.plugin.shared.Setup;
 import net.buycraft.plugin.shared.config.BuycraftConfiguration;
 import net.buycraft.plugin.shared.tasks.PlayerJoinCheckTask;
 import net.buycraft.plugin.shared.util.AnalyticsSend;
-import net.minecraft.command.CommandSource;
-import net.minecraft.command.Commands;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
-import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import okhttp3.OkHttpClient;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -99,12 +93,13 @@ public class BuycraftPlugin {
             platform = new ForgeBuycraftPlatform(this);
 
             //region Commands
+
             event.getCommandDispatcher().register(this.configureCommand(Commands.literal("tebex")));
             event.getCommandDispatcher().register(this.configureCommand(Commands.literal("buycraft")));
 
             if (!configuration.isDisableBuyCommand())
                 configuration.getBuyCommandName().forEach(cmd ->
-                        event.getCommandDispatcher().register(Commands.literal(cmd).executes(new BuyCommand(this))));
+                        event.registerServerCommand(new BuyCommand(this, cmd)));
             //endregion
 
             try {
@@ -128,16 +123,6 @@ public class BuycraftPlugin {
 //            i18n = configuration.createI18n(); //TODO Re-enable when forge fixes resource loading
             getLogger().warn("Forcing english translations while we wait on a forge bugfix!");
             httpClient = Setup.okhttp(baseDirectory.resolve("cache").toFile());
-
-            if (configuration.isCheckForUpdates()) {
-                VersionCheck check = new VersionCheck(this, pluginVersion, configuration.getServerKey());
-                try {
-                    check.verify();
-                } catch (IOException e) {
-                    getLogger().error("Can't check for updates", e);
-                }
-                MinecraftForge.EVENT_BUS.register(check);
-            }
 
             String serverKey = configuration.getServerKey();
             if (serverKey == null || serverKey.equals("INVALID")) {

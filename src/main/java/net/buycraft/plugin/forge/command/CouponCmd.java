@@ -4,6 +4,7 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import net.buycraft.plugin.data.Coupon;
 import net.buycraft.plugin.forge.BuycraftPlugin;
+import net.buycraft.plugin.forge.util.ForgeMessageUtil;
 import net.buycraft.plugin.shared.util.CouponUtil;
 import net.minecraft.command.CommandSource;
 import net.minecraft.util.text.TextComponentString;

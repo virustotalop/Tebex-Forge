@@ -4,6 +4,7 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.buycraft.plugin.forge.BuycraftPlugin;
+import net.buycraft.plugin.forge.util.ForgeMessageUtil;
 import net.buycraft.plugin.shared.util.ReportBuilder;
 import net.minecraft.command.CommandSource;
 import net.minecraft.util.text.TextComponentString;

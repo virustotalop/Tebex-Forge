@@ -1,7 +1,7 @@
-package net.buycraft.plugin.forge.command;
+package net.buycraft.plugin.forge.util;
 
 import com.google.common.collect.ImmutableMap;
-import net.minecraft.command.CommandSource;
+import net.minecraft.command.ICommandSender;
 import net.minecraft.util.text.ITextComponent;
 
 import java.text.MessageFormat;
@@ -66,8 +66,8 @@ public final class ForgeMessageUtil {
             .build();
 
     //Look idk, forge methods are still kinda busted in how they work, so a util it is \o/
-    public static void sendMessage(CommandSource source, ITextComponent message) {
-        if (source.getEntity() != null) source.getEntity().sendMessage(message);
+    public static void sendMessage(ICommandSender source, ITextComponent message) {
+        if (source.getCommandSenderEntity() != null) source.sendMessage(message);
         else if (source.getServer() != null) source.getServer().sendMessage(message);
     }
 
