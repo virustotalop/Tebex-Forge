@@ -2,7 +2,6 @@ package net.buycraft.plugin.forge.command;
 
 import net.buycraft.plugin.forge.BuycraftPlugin;
 import net.buycraft.plugin.forge.util.ForgeMessageUtil;
-import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.ITextComponent;
@@ -14,17 +13,17 @@ import net.minecraft.util.text.event.HoverEvent;
 
 import java.util.stream.Stream;
 
-public class InfoCmd extends SubCommand {
+public class InfoCmd extends Subcommand {
 
     private final BuycraftPlugin plugin;
 
     public InfoCmd(final BuycraftPlugin plugin) {
-        super("info", "/tebex info");
+        super("info", "info");
         this.plugin = plugin;
     }
 
     @Override
-    public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
+    public void execute(MinecraftServer server, ICommandSender sender, String[] args) {
         if (plugin.getApiClient() == null) {
             ForgeMessageUtil.sendMessage(sender, new TextComponentString(ForgeMessageUtil.format("generic_api_operation_error"))
                     .setStyle(BuycraftPlugin.ERROR_STYLE));
@@ -52,5 +51,10 @@ public class InfoCmd extends SubCommand {
                             .setStyle(new Style().setColor(TextFormatting.GRAY)).appendSibling(webstore)
             ).forEach(message -> ForgeMessageUtil.sendMessage(sender, message));
         }
+    }
+
+    @Override
+    public String getI18n() {
+        return "usage_information";
     }
 }

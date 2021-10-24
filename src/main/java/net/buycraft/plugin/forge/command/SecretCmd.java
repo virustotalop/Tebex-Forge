@@ -10,13 +10,18 @@ import net.minecraft.util.text.TextComponentString;
 
 import java.io.IOException;
 
-public class SecretCmd extends SubCommand {
+public class SecretCmd extends Subcommand {
 
     private final BuycraftPlugin plugin;
 
     public SecretCmd(final BuycraftPlugin plugin) {
-        super("secret", "/tebex secret <secret>");
+        super("secret", "secret <secret>");
         this.plugin = plugin;
+    }
+
+    @Override
+    public String getI18n() {
+        return "usage_secret";
     }
 
     @Override

@@ -2,21 +2,21 @@ package net.buycraft.plugin.forge.command;
 
 import net.buycraft.plugin.forge.BuycraftPlugin;
 import net.buycraft.plugin.forge.util.ForgeMessageUtil;
-import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.TextComponentString;
 
-public class ForceCheckCmd extends SubCommand {
+public class ForceCheckCmd extends Subcommand {
+
     private final BuycraftPlugin plugin;
 
     public ForceCheckCmd(final BuycraftPlugin plugin) {
-        super("forcecheck", "/tebex forcecheck");
+        super("forcecheck", "forcecheck");
         this.plugin = plugin;
     }
 
     @Override
-    public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
+    public void execute(MinecraftServer server, ICommandSender sender, String[] args) {
         if (plugin.getApiClient() == null) {
             ForgeMessageUtil.sendMessage(sender, new TextComponentString(ForgeMessageUtil.format("need_secret_key"))
                     .setStyle(BuycraftPlugin.ERROR_STYLE));
@@ -28,5 +28,10 @@ public class ForceCheckCmd extends SubCommand {
             ForgeMessageUtil.sendMessage(sender, new TextComponentString(ForgeMessageUtil.format("forcecheck_queued"))
                     .setStyle(BuycraftPlugin.SUCCESS_STYLE));
         }
+    }
+
+    @Override
+    public String getI18n() {
+        return "usage_forcecheck";
     }
 }

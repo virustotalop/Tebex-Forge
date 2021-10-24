@@ -3,7 +3,6 @@ package net.buycraft.plugin.forge.command;
 import net.buycraft.plugin.forge.BuycraftPlugin;
 import net.buycraft.plugin.forge.util.ForgeMessageUtil;
 import net.buycraft.plugin.shared.util.ReportBuilder;
-import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.TextComponentString;
@@ -17,19 +16,19 @@ import java.nio.file.StandardOpenOption;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class ReportCmd extends SubCommand {
+public class ReportCmd extends Subcommand {
 
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd-hh-mm-ss");
 
     private final BuycraftPlugin plugin;
 
     public ReportCmd(final BuycraftPlugin plugin) {
-        super("report", "/tebex report");
+        super("report", "report");
         this.plugin = plugin;
     }
 
     @Override
-    public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
+    public void execute(MinecraftServer server, ICommandSender sender, String[] args) {
         ForgeMessageUtil.sendMessage(sender, new TextComponentString(ForgeMessageUtil.format("report_wait"))
                 .setStyle(BuycraftPlugin.SUCCESS_STYLE));
 
@@ -60,5 +59,10 @@ public class ReportCmd extends SubCommand {
                 plugin.getLogger().info(generated);
             }
         });
+    }
+
+    @Override
+    public String getI18n() {
+        return "usage_report";
     }
 }

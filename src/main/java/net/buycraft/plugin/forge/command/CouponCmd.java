@@ -1,70 +1,96 @@
 package net.buycraft.plugin.forge.command;
 
+import net.buycraft.plugin.BuyCraftAPIException;
+import net.buycraft.plugin.data.Coupon;
 import net.buycraft.plugin.forge.BuycraftPlugin;
-import net.minecraft.command.CommandException;
+import net.buycraft.plugin.shared.util.CouponUtil;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.text.Style;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
 
-public class CouponCmd extends SubCommand {
+import java.io.IOException;
+import java.util.Arrays;
+
+public class CouponCmd extends Subcommand {
     private final BuycraftPlugin plugin;
 
     public CouponCmd(final BuycraftPlugin plugin) {
-        super("coupon", "/tebex coupon <create/delete>");
+        super("coupon", "coupon <create/delete>");
         this.plugin = plugin;
     }
 
-    /*public int create(CommandContext<CommandSource> context) {
-        if (plugin.getApiClient() == null) {
-            ForgeMessageUtil.sendMessage(context.getSource(), new TextComponentString(ForgeMessageUtil.format("generic_api_operation_error"))
-                    .setStyle(BuycraftPlugin.ERROR_STYLE));
-            return 0;
+    @Override
+    public void execute(MinecraftServer server, ICommandSender sender, String[] args) {
+        if (args.length == 0) {
+            sender.sendMessage(new TextComponentString(plugin.getI18n().get("usage_coupon_subcommands"))
+                    .setStyle(new Style().setColor(TextFormatting.RED)));
+            return;
         }
+        switch (args[0]) {
+            case "create":
+                createCoupon(sender, args);
+                break;
+            case "delete":
+                deleteCoupon(sender, args);
+                break;
+            default:
+                sender.sendMessage(new TextComponentString(this.plugin.getI18n().get("usage_coupon_subcommands"))
+                .setStyle(new Style().setColor(TextFormatting.RED)));
+                break;
+        }
+    }
 
+    private void createCoupon(final ICommandSender sender, String[] args) {
+        String[] stripped = Arrays.copyOfRange(args, 1, args.length);
         final Coupon coupon;
         try {
-            coupon = CouponUtil.parseArguments(StringArgumentType.getString(context, "data").split(" "));
+            coupon = CouponUtil.parseArguments(stripped);
         } catch (Exception e) {
-            ForgeMessageUtil.sendMessage(context.getSource(), new TextComponentString(ForgeMessageUtil.format("coupon_creation_arg_parse_failure", e.getMessage()))
-                    .setStyle(BuycraftPlugin.ERROR_STYLE));
-            return 0;
+            sender.sendMessage(new TextComponentString(e.getMessage()));
+            sender.sendMessage(new TextComponentString(plugin.getI18n().get("coupon_creation_arg_parse_failure",
+                    e.getMessage())).setStyle(new Style().setColor(TextFormatting.RED)));
+            return;
         }
 
         plugin.getPlatform().executeAsync(() -> {
             try {
                 plugin.getApiClient().createCoupon(coupon).execute();
-                ForgeMessageUtil.sendMessage(context.getSource(), new TextComponentString(ForgeMessageUtil.format("coupon_creation_success", coupon.getCode()))
-                        .setStyle(BuycraftPlugin.SUCCESS_STYLE));
+                sender.sendMessage(new TextComponentString(plugin.getI18n().get("coupon_creation_success",
+                        coupon.getCode())).setStyle(new Style().setColor(TextFormatting.GREEN)));
             } catch (IOException e) {
-                ForgeMessageUtil.sendMessage(context.getSource(), new TextComponentString(ForgeMessageUtil.format("generic_api_operation_error"))
-                        .setStyle(BuycraftPlugin.ERROR_STYLE));
+                sender.sendMessage(new TextComponentString(e.getMessage())
+                        .setStyle(new Style().setColor(TextFormatting.RED)));
+
             }
         });
-
-        return 1;
     }
 
-    public int delete(CommandContext<CommandSource> context) {
-        if (plugin.getApiClient() == null) {
-            ForgeMessageUtil.sendMessage(context.getSource(), new TextComponentString(ForgeMessageUtil.format("generic_api_operation_error"))
-                    .setStyle(BuycraftPlugin.ERROR_STYLE));
-            return 0;
+    private void deleteCoupon(final ICommandSender sender, String[] args) {
+        if (args.length != 2) {
+            sender.sendMessage(new TextComponentString(
+                    plugin.getI18n().get("no_coupon_specified"))
+                    .setStyle(new Style().setColor(TextFormatting.RED)));
+            return;
         }
 
-        String code = StringArgumentType.getString(context, "code");
+        final String code = args[1];
+
         plugin.getPlatform().executeAsync(() -> {
             try {
                 plugin.getApiClient().deleteCoupon(code).execute();
-                ForgeMessageUtil.sendMessage(context.getSource(), new TextComponentString(ForgeMessageUtil.format("coupon_deleted")).setStyle(BuycraftPlugin.SUCCESS_STYLE));
-            } catch (Exception e) {
-                ForgeMessageUtil.sendMessage(context.getSource(), new TextComponentString(e.getMessage()).setStyle(BuycraftPlugin.ERROR_STYLE));
+                sender.sendMessage(new TextComponentString(plugin.getI18n().get("coupon_deleted"))
+                .setStyle(new Style().setColor(TextFormatting.GREEN)));
+            } catch (IOException | BuyCraftAPIException e) {
+                sender.sendMessage(new TextComponentString(e.getMessage())
+                .setStyle(new Style().setColor(TextFormatting.RED)));
             }
         });
-
-        return 1;
-    }*/
+    }
 
     @Override
-    public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
-
+    public String getI18n() {
+        return "usage_coupon";
     }
 }
