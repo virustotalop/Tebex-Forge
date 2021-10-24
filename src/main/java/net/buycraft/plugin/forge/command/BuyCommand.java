@@ -34,7 +34,12 @@ public class BuyCommand extends CommandBase {
     }
 
     @Override
-    public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
+    public boolean checkPermission(MinecraftServer server, ICommandSender sender) {
+        return true;
+    }
+
+    @Override
+    public void execute(MinecraftServer server, ICommandSender sender, String[] args) {
         if(plugin.getServerInformation() == null) {
             ForgeMessageUtil.sendMessage(sender,
                     new TextComponentString(ForgeMessageUtil.format("information_no_server"))
