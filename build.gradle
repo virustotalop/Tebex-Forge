@@ -78,7 +78,7 @@ shadowJar {
     relocate 'okio', 'net.buycraft.plugin.internal.okio'
     relocate 'retrofit2', 'net.buycraft.plugin.internal.retrofit2'
     relocate 'com.fasterxml.jackson', 'net.buycraft.plugin.internal.jackson'
-	archiveBaseName.set('DynamicGui')
+	archiveBaseName.set('TebexForge')
 	archiveClassifier.set('')
 }
 
