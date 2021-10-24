@@ -67,7 +67,7 @@ public class BuycraftPlugin {
     private OkHttpClient httpClient;
     private IBuycraftPlatform platform;
     private CommandExecutor commandExecutor;
-    private BuycraftI18n i18n; //TODO Re-enable when forge fixes resource loading
+    private BuycraftI18n i18n;
     private PostCompletedCommandsTask completedCommandsTask;
     private PlayerJoinCheckTask playerJoinCheckTask;
 
@@ -118,7 +118,7 @@ public class BuycraftPlugin {
                 return;
             }
 
-            i18n = configuration.createI18n(); //TODO Re-enable when forge fixes resource loading
+            i18n = configuration.createI18n();
             getLogger().warn("Forcing english translations while we wait on a forge bugfix!");
 
             httpClient = Setup.okhttp(baseDirectory.resolve("cache").toFile());
