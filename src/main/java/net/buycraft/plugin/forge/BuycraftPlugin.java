@@ -84,7 +84,7 @@ public class BuycraftPlugin {
     }
 
     // As as close to an onEnable as we are ever going to get :(
-    @SubscribeEvent
+    @Mod.EventHandler
     public void onServerStarting(FMLServerStartingEvent event) {
         if (event.getServer().isDedicatedServer()) {
             server = event.getServer();
