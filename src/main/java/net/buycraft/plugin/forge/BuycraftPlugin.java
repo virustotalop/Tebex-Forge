@@ -41,7 +41,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.logging.Level;
 
-@Mod(modid = "buycraftx", name = "BuycraftX", version = BuycraftPlugin.PLUGIN_VERSION)
+@Mod(modid = "buycraftx", name = "BuycraftX", version = BuycraftPlugin.PLUGIN_VERSION, acceptableRemoteVersions = "*")
 public class BuycraftPlugin {
 
     public static final String PLUGIN_VERSION = "${pluginVersion}";
