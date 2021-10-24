@@ -5,8 +5,8 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
-        classpath 'com.github.jengelman.gradle.plugins:shadow:4.0.4'
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '4.+', changing: true
+        classpath 'com.github.jengelman.gradle.plugins:shadow:5.0.0'
     }
 }
 apply plugin: 'net.minecraftforge.gradle'
@@ -18,7 +18,8 @@ apply plugin: 'com.github.johnrengelman.shadow'
 group = 'net.buycraft' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'buycraftx-forge'
 
-sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
 
 repositories {
     mavenLocal()
@@ -75,8 +76,8 @@ shadowJar {
     relocate 'okio', 'net.buycraft.plugin.internal.okio'
     relocate 'retrofit2', 'net.buycraft.plugin.internal.retrofit2'
     relocate 'com.fasterxml.jackson', 'net.buycraft.plugin.internal.jackson'
-
-    classifier '' // Replace the default JAR
+	archiveBaseName.set('DynamicGui')
+	archiveClassifier.set('')
 }
 
 afterEvaluate {
