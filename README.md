@@ -15,10 +15,6 @@ This library is currently in development, so should be considered alpha - functi
 
 There is no support for these builds from tebex, do not contact tebex/buycraft. If you run into an issue file an issue on this repository.
 
-## Contributing
-
-We welcome contributions from the community. Please refer to the CONTRIBUTING.md file for more details. By submitting code
-to us, you agree to the terms set out in the CONTRIBUTING.md file
-
 ## Installation
-We recommend downloading the latest build from your Tebex Control Panel.
+
+Download the latest [release jar file.](https://github.com/virustotalop/Tebex-Forge/releases)
