@@ -1,6 +1,6 @@
 # Tebex-Forge
 
-An unofficial 1.12 backport of the official 1.13 Tebex-Forge mod
+An **unofficial** 1.12 backport of the official 1.13 Tebex-Forge mod
 
 Tebex-Forge contains various Forge-related code for the official Forge Mod for the [Tebex](https://www.tebex.io) server 
 monitization platform.
